@@ -55,9 +55,7 @@ export class BookingReviewCollector {
         await this.waitForReviewCards(page);
       } catch {
         await this.saveDiagnosticScreenshot(page, `${property.slug}-property-page`);
-        throw new Error(
-          'The public review dialog opened, but no review cards became available.',
-        );
+        throw new Error('The public review dialog opened, but no review cards became available.');
       }
 
       for (let pageNumber = 1; pageNumber <= maxPages; pageNumber += 1) {
@@ -165,7 +163,13 @@ export class BookingReviewCollector {
     // renders the reset action as different element types across page variants,
     // so target its accessible text instead of coupling this flow to a tag name.
     await page.waitForTimeout(500);
-    if (await this.cardLocator(page).first().isVisible().catch(() => false)) return;
+    if (
+      await this.cardLocator(page)
+        .first()
+        .isVisible()
+        .catch(() => false)
+    )
+      return;
 
     const showAll = page.getByText('Show all reviews', { exact: true }).first();
     if ((await showAll.count()) && (await showAll.isVisible().catch(() => false))) {
@@ -174,7 +178,12 @@ export class BookingReviewCollector {
 
       // Resetting modal filters can close the dialog on some Booking page
       // variants. Reopen it once so extraction sees the unfiltered cards.
-      if (!(await this.cardLocator(page).first().isVisible().catch(() => false))) {
+      if (
+        !(await this.cardLocator(page)
+          .first()
+          .isVisible()
+          .catch(() => false))
+      ) {
         await this.openReviewDialog(page);
       }
     }
@@ -200,17 +209,12 @@ export class BookingReviewCollector {
         .map((child) => child.textContent?.trim() ?? '')
         .filter(Boolean);
       const name =
-        leafText.find((text) => !/\breviews?\b/i.test(text) && !/^\d+$/.test(text)) ??
-        null;
+        leafText.find((text) => !/\breviews?\b/i.test(text) && !/^\d+$/.test(text)) ?? null;
       const country =
         [...leafText]
           .reverse()
-          .find(
-            (text) =>
-              text !== name &&
-              !/\breviews?\b/i.test(text) &&
-              !/^\d+$/.test(text),
-          ) ?? null;
+          .find((text) => text !== name && !/\breviews?\b/i.test(text) && !/^\d+$/.test(text)) ??
+        null;
       return { name, country };
     });
   }
@@ -264,9 +268,7 @@ export class BookingReviewCollector {
       );
     }
     if (/page not found|we (?:could not|couldn't|cannot) find that page/i.test(body)) {
-      throw new Error(
-        'Booking.com no longer exposes reviews at the configured public page path.',
-      );
+      throw new Error('Booking.com no longer exposes reviews at the configured public page path.');
     }
   }
 
