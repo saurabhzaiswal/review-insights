@@ -1,6 +1,6 @@
 <template>
   <div class="chart-frame">
-    <Line v-if="points.length" :data="chartData" :options="chartOptions" />
+    <LineChart v-if="points.length" :data="chartData" :options="chartOptions" />
     <EmptyState
       v-else
       title="No rating trend yet"
@@ -11,13 +11,13 @@
 </template>
 
 <script>
-import { Line } from 'vue-chartjs'
+import { Line as LineChart } from 'vue-chartjs'
 import '../../charts/chart.js'
 import EmptyState from '../common/EmptyState.vue'
 
 export default {
   name: 'RatingTrendChart',
-  components: { Line, EmptyState },
+  components: { LineChart, EmptyState },
   props: {
     points: { type: Array, default: () => [] },
   },

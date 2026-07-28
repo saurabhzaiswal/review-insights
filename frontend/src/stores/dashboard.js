@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia'
 import { dashboardApi } from '../api/dashboard.api.js'
+import { presentProperty } from '../utils/portfolio-presentation.js'
 
 export const useDashboardStore = defineStore('dashboard', {
   state: () => ({
@@ -43,6 +44,8 @@ export const useDashboardStore = defineStore('dashboard', {
           if (key === 'insights') {
             this.insights = result.value.data?.insights ?? []
             this.insightMeta = result.value.data ?? null
+          } else if (key === 'propertyRatings') {
+            this.propertyRatings = (result.value.data ?? []).map(presentProperty)
           } else {
             this[key] = result.value.data ?? []
           }

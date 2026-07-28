@@ -2,9 +2,9 @@
   <DashboardLayout title="Review coverage">
     <section class="page-intro page-intro--compact">
       <div>
-        <span class="eyebrow">Guest feedback</span>
-        <h2>Review data & updates</h2>
-        <p>See which hotels are included and check for newly published feedback.</p>
+        <span class="eyebrow">Backend data coverage</span>
+        <h2>Review dataset & availability</h2>
+        <p>See which portfolio properties and review records are currently available from the backend.</p>
       </div>
       <button class="button button--primary" :disabled="updateDisabled" @click="handleSync">
         {{ updateButtonLabel }}
@@ -17,10 +17,10 @@
     <AppSkeleton v-if="propertiesLoading" variant="cards" :count="3" />
     <section v-else class="health-grid">
       <article class="health-card">
-        <span class="health-card__icon health-card__icon--success">✓</span>
+        <span class="health-card__icon health-card__icon--success">D</span>
         <div>
           <small>Guest feedback</small>
-          <strong>Ready to explore</strong>
+          <strong>Database records ready</strong>
           <p>{{ totalReviewsLabel }}</p>
         </div>
       </article>
@@ -37,9 +37,9 @@
       <article class="health-card">
         <span class="health-card__icon health-card__icon--info">{{ properties.length }}</span>
         <div>
-          <small>Hotels included</small>
+          <small>Portfolio properties</small>
           <strong>{{ properties.length === 4 ? 'All four ready' : `${properties.length} available` }}</strong>
-          <p>Sydney hotels included in this overview</p>
+          <p>Properties available through the backend API</p>
         </div>
       </article>
     </section>
@@ -68,11 +68,11 @@
       />
       <div v-else class="health-table">
         <div class="health-row health-row--head">
-          <span>Hotel</span><span>Guest feedback</span><span>Latest update</span><span>Availability</span>
+          <span>Property</span><span>Review source</span><span>Latest update</span><span>Availability</span>
         </div>
         <div v-for="property in properties" :key="property.id" class="health-row">
           <strong>{{ property.name }}</strong>
-          <span data-label="Guest feedback">Booking.com reviews</span>
+          <span data-label="Review source">Backend review records</span>
           <span data-label="Latest update">{{ propertyUpdatedAt(property.id) }}</span>
           <div class="health-row__status" data-label="Availability">
             <StatusBadge
@@ -113,8 +113,9 @@
       <div>
         <h3>About review updates</h3>
         <p>
-          Hotels update one at a time at a conservative rate. If Booking.com requests an access verification,
-          collection stops safely and the existing dashboard data remains available.
+          The portfolio keeps source collection separate from dashboard reading. If an external review source
+          requests access verification, collection stops safely and the existing demonstration dataset remains
+          available.
         </p>
       </div>
     </section>
@@ -181,12 +182,12 @@ export default {
       if (this.scraperStatus?.lastSuccessfulSync) {
         return `Last completed ${this.formatDateTime(this.scraperStatus.lastSuccessfulSync)}`
       }
-      return 'Use the button to collect public feedback'
+      return 'Use the button to check the configured external source'
     },
     totalReviewsLabel() {
       return this.runs.length
         ? 'Stored feedback remains available during updates'
-        : 'Demonstration feedback is currently available'
+        : 'Seeded database feedback is currently available'
     },
     latestRunByProperty() {
       return new Map((this.scraperStatus?.properties ?? []).map((item) => [item.property?.id, item]))

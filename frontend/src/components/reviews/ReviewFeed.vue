@@ -42,12 +42,12 @@ import ReviewCard from './ReviewCard.vue'
 export default {
   name: 'ReviewFeed',
   components: { AppSkeleton, EmptyState, ReviewCard },
-  emits: ['clear', 'load-more', 'retry'],
   props: {
     reviews: { type: Array, default: () => [] },
     pagination: { type: Object, default: null },
     loading: { type: Boolean, default: false },
     error: { type: String, default: null },
   },
+  emits: ['clear', 'load-more', 'retry'],
 }
 </script>

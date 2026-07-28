@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia'
 import { scraperApi } from '../api/scraper.api.js'
+import { presentScraperRun, presentScraperStatus } from '../utils/portfolio-presentation.js'
 
 export const useScraperStore = defineStore('scraper', {
   state: () => ({
@@ -17,8 +18,8 @@ export const useScraperStore = defineStore('scraper', {
 
       try {
         const response = await scraperApi.status()
-        this.status = response.status
-        this.runs = response.runs
+        this.status = presentScraperStatus(response.status)
+        this.runs = (response.runs ?? []).map(presentScraperRun)
       } catch (error) {
         this.error = error.userMessage
       } finally {

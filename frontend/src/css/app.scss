@@ -297,6 +297,9 @@ a {
   text-transform: uppercase;
 }
 .button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   min-height: 42px;
   padding: 0 17px;
   border-radius: 10px;

@@ -1,0 +1,17 @@
+{
+  "name": "Hospitality Review Intelligence",
+  "short_name": "Review Intelligence",
+  "description": "Independent hospitality review analytics portfolio project by Saurabh Choudhary.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f4f8fa",
+  "theme_color": "#071a2b",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}

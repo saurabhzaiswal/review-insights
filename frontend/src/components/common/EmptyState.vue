@@ -12,12 +12,12 @@
 <script>
 export default {
   name: 'EmptyState',
-  emits: ['action'],
   props: {
     title: { type: String, required: true },
     message: { type: String, required: true },
     symbol: { type: String, default: '—' },
     actionLabel: { type: String, default: '' },
   },
+  emits: ['action'],
 }
 </script>

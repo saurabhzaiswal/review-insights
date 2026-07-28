@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia'
 import { reviewsApi } from '../api/reviews.api.js'
+import { presentReview } from '../utils/portfolio-presentation.js'
 
 export const useReviewsStore = defineStore('reviews', {
   state: () => ({
@@ -30,7 +31,8 @@ export const useReviewsStore = defineStore('reviews', {
 
       try {
         const response = await reviewsApi.list(this.filters)
-        const reviews = response.data?.data ?? response.data ?? []
+        const rawReviews = response.data?.data ?? response.data ?? []
+        const reviews = rawReviews.map(presentReview)
         this.reviews = append ? [...this.reviews, ...reviews] : reviews
         this.pagination = response.data?.pagination ?? null
         return response.data
@@ -49,7 +51,7 @@ export const useReviewsStore = defineStore('reviews', {
 
     async fetchReview(id) {
       const response = await reviewsApi.findById(id)
-      this.selectedReview = response.data
+      this.selectedReview = presentReview(response.data)
       return response.data
     },
 

@@ -37,12 +37,12 @@
 <script>
 export default {
   name: 'DashboardFilters',
-  emits: ['change'],
   props: {
     properties: { type: Array, default: () => [] },
     filters: { type: Object, required: true },
     disabled: { type: Boolean, default: false },
   },
+  emits: ['change'],
   data() {
     return {
       propertyId: this.filters.propertyIds?.[0] ?? null,

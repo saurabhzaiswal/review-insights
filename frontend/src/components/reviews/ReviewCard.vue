@@ -7,7 +7,7 @@
       <div class="review-card__header">
         <div>
           <div class="review-card__meta">
-            <strong>{{ review.property?.name ?? 'Azzurro property' }}</strong>
+            <strong>{{ review.property?.name ?? 'Portfolio Property' }}</strong>
             <span>•</span>
             <time :datetime="review.reviewDate">{{ formatDate(review.reviewDate) }}</time>
           </div>
@@ -16,7 +16,9 @@
         <StatusBadge :label="review.sentiment" :tone="review.sentiment" dot />
       </div>
 
-      <p v-if="review.reviewText" class="review-card__summary">{{ review.reviewText }}</p>
+      <p v-if="review.reviewText" class="review-card__summary">
+        {{ review.reviewText }}
+      </p>
       <div v-if="review.positiveComment || review.negativeComment" class="review-card__comments">
         <p v-if="review.positiveComment" class="review-comment review-comment--positive">
           <span aria-hidden="true">+</span>{{ review.positiveComment }}

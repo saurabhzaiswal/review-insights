@@ -115,12 +115,12 @@ function selectedRatingRange(filters) {
 
 export default {
   name: 'ReviewFilters',
-  emits: ['change', 'reset'],
   props: {
     filters: { type: Object, required: true },
     properties: { type: Array, default: () => [] },
     topics: { type: Array, default: () => [] },
   },
+  emits: ['change', 'reset'],
   data() {
     return {
       debounceTimer: null,
@@ -192,7 +192,8 @@ export default {
     },
     emitChange() {
       // ratingRange is presentation-only; the API receives its numeric bounds.
-      const { ratingRange, ...filters } = this.local
+      const filters = { ...this.local }
+      delete filters.ratingRange
       this.$emit('change', { ...filters, page: 1 })
     },
     reset() {
