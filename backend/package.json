@@ -15,7 +15,7 @@
     "scrape": "ts-node -r tsconfig-paths/register src/scraper/scraper.cli.ts",
     "start": "nest start",
     "start:dev": "nest start --watch",
-    "start:prod": "node dist/main"
+    "start:prod": "node dist/src/main.js"
   },
   "dependencies": {
     "@nestjs/common": "^11.1.6",
