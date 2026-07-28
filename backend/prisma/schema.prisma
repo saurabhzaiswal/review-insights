@@ -1,0 +1,126 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Sentiment {
+  POSITIVE
+  NEUTRAL
+  NEGATIVE
+}
+
+enum ScraperRunStatus {
+  RUNNING
+  SUCCESS
+  PARTIAL
+  FAILED
+}
+
+model Property {
+  id          String       @id @default(uuid(7)) @db.Uuid
+  slug        String       @unique @db.VarChar(80)
+  name        String       @db.VarChar(120)
+  bookingUrl  String       @unique @map("booking_url") @db.VarChar(500)
+  active      Boolean      @default(true)
+  reviews     Review[]
+  scraperRuns ScraperRun[]
+  createdAt   DateTime     @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt   DateTime     @updatedAt @map("updated_at") @db.Timestamptz(3)
+
+  @@index([active, name])
+  @@map("properties")
+}
+
+model Review {
+  id               String        @id @default(uuid(7)) @db.Uuid
+  propertyId       String        @map("property_id") @db.Uuid
+  property         Property      @relation(fields: [propertyId], references: [id], onDelete: Restrict)
+  externalReviewId String?       @map("external_review_id") @db.VarChar(160)
+  fingerprint      String        @db.Char(64)
+  reviewerName     String?       @map("reviewer_name") @db.VarChar(160)
+  reviewerCountry  String?       @map("reviewer_country") @db.VarChar(100)
+  rating           Decimal       @db.Decimal(3, 1)
+  title            String?       @db.VarChar(500)
+  reviewText       String?       @map("review_text") @db.Text
+  positiveComment  String?       @map("positive_comment") @db.Text
+  negativeComment  String?       @map("negative_comment") @db.Text
+  reviewDate       DateTime      @map("review_date") @db.Date
+  stayDate         DateTime?     @map("stay_date") @db.Date
+  roomType         String?       @map("room_type") @db.VarChar(200)
+  travellerType    String?       @map("traveller_type") @db.VarChar(100)
+  nightsStayed     Int?          @map("nights_stayed") @db.SmallInt
+  sourceUrl        String        @map("source_url") @db.VarChar(500)
+  sentiment        Sentiment
+  isSynthetic      Boolean       @default(false) @map("is_synthetic")
+  scrapedAt        DateTime      @default(now()) @map("scraped_at") @db.Timestamptz(3)
+  topics           ReviewTopic[]
+  createdAt        DateTime      @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt        DateTime      @updatedAt @map("updated_at") @db.Timestamptz(3)
+
+  // Together these constraints keep scraper runs idempotent with or without
+  // a stable source-provided review identifier.
+  @@unique([propertyId, externalReviewId])
+  @@unique([propertyId, fingerprint])
+  @@index([propertyId, reviewDate(sort: Desc)])
+  @@index([reviewDate(sort: Desc)])
+  @@index([sentiment, reviewDate(sort: Desc)])
+  @@index([rating])
+  @@map("reviews")
+}
+
+model Topic {
+  id          String        @id @default(uuid(7)) @db.Uuid
+  key         String        @unique @db.VarChar(80)
+  displayName String        @map("display_name") @db.VarChar(120)
+  description String?       @db.VarChar(500)
+  active      Boolean       @default(true)
+  reviews     ReviewTopic[]
+  createdAt   DateTime      @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt   DateTime      @updatedAt @map("updated_at") @db.Timestamptz(3)
+
+  @@index([active, displayName])
+  @@map("topics")
+}
+
+model ReviewTopic {
+  id          String    @id @default(uuid(7)) @db.Uuid
+  reviewId    String    @map("review_id") @db.Uuid
+  review      Review    @relation(fields: [reviewId], references: [id], onDelete: Cascade)
+  topicId     String    @map("topic_id") @db.Uuid
+  topic       Topic     @relation(fields: [topicId], references: [id], onDelete: Restrict)
+  sentiment   Sentiment
+  confidence  Decimal?  @db.Decimal(4, 3)
+  matchedText String?   @map("matched_text") @db.VarChar(500)
+  createdAt   DateTime  @default(now()) @map("created_at") @db.Timestamptz(3)
+
+  @@unique([reviewId, topicId])
+  @@index([topicId, sentiment])
+  @@index([reviewId])
+  @@map("review_topics")
+}
+
+model ScraperRun {
+  id                String           @id @default(uuid(7)) @db.Uuid
+  propertyId        String?          @map("property_id") @db.Uuid
+  property          Property?        @relation(fields: [propertyId], references: [id], onDelete: SetNull)
+  status            ScraperRunStatus @default(RUNNING)
+  reviewsFound      Int              @default(0) @map("reviews_found")
+  reviewsInserted   Int              @default(0) @map("reviews_inserted")
+  reviewsUpdated    Int              @default(0) @map("reviews_updated")
+  duplicatesSkipped Int              @default(0) @map("duplicates_skipped")
+  startedAt         DateTime         @default(now()) @map("started_at") @db.Timestamptz(3)
+  completedAt       DateTime?        @map("completed_at") @db.Timestamptz(3)
+  errorMessage      String?          @map("error_message") @db.Text
+  metadata          Json?
+  createdAt         DateTime         @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt         DateTime         @updatedAt @map("updated_at") @db.Timestamptz(3)
+
+  @@index([startedAt(sort: Desc)])
+  @@index([status, startedAt(sort: Desc)])
+  @@index([propertyId, startedAt(sort: Desc)])
+  @@map("scraper_runs")
+}

@@ -1,0 +1,28 @@
+# Dependencies
+node_modules/
+.pnpm-store/
+
+# Build output
+dist/
+coverage/
+
+# Local environment files
+.env
+.env.local
+.env.*.local
+
+# Runtime and debug files
+*.log
+*.pid
+.scraper-debug/
+
+# Local delivery notes
+docs/remaining-work.md
+
+# Editor and operating-system files
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+
+docs/remaining-work.md

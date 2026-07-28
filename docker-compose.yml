@@ -1,0 +1,22 @@
+services:
+  postgres:
+    image: postgres:17-alpine
+    container_name: azzurro-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: azzurro_reviews
+      POSTGRES_USER: azzurro
+      POSTGRES_PASSWORD: azzurro_dev_password
+    ports:
+      - "5432:5432"
+    volumes:
+      - azzurro_postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U azzurro -d azzurro_reviews"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+
+volumes:
+  azzurro_postgres_data:
